@@ -1,42 +1,58 @@
-\documentclass[conference]{IEEEtran}
-\IEEEoverridecommandlockouts
-% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
-\usepackage{cite}
-\usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
-\usepackage{graphicx}
-\usepackage{textcomp}
-\usepackage{xcolor}
+% VLDB template version of 2020-08-03 enhances the ACM template, version 1.7.0:
+% https://www.acm.org/publications/proceedings-template
+% The ACM Latex guide provides further information about the ACM template
+
+
+
+
+\documentclass[sigconf, nonacm]{acmart}
 \usepackage{soul}
-\usepackage{biblatex} %Imports biblatex package
-\addbibresource{bibliography.bib} %Import the bibliography file
-\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
-    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
-    
-    
+
+
+\usepackage[demo]{graphicx}
+\usepackage{subcaption}
+
+%% The following content must be adapted for the final version
+% paper-specific
+\newcommand\vldbdoi{XX.XX/XXX.XX}
+\newcommand\vldbpages{XXX-XXX}
+% issue-specific
+\newcommand\vldbvolume{14}
+\newcommand\vldbissue{1}
+\newcommand\vldbyear{2020}
+% should be fine as it is
+\newcommand\vldbauthors{\authors}
+\newcommand\vldbtitle{\shorttitle} 
+% leave empty if no availability url should be set
+\newcommand\vldbavailabilityurl{URL_TO_YOUR_ARTIFACTS}
+% whether page numbers should be shown or not, use 'plain' for review versions, 'empty' for camera ready
+\newcommand\vldbpagestyle{plain} 
+
+
 \begin{document}
-
-
 \title{Semantic Segmentation on Satellite Imagery (must change*)\\}
-\author{\IEEEauthorblockN{Nancy Nigam}
-\IEEEauthorblockA{\textit{Computer Science} \\
-\textit{CIMS, NYU}\\
-New York City, US\\
-nn2163@nyu.edu}
-\and
-\IEEEauthorblockN{Aditya Upadhyaya}
-\IEEEauthorblockA{\textit{Computer Science} \\
-\textit{CIMS, NYU}\\
-New York City, US\\
-au2056@nyu.edu}
-\and
-\IEEEauthorblockN{Jorge Roldan}
-\IEEEauthorblockA{\textit{Computer Science} \\
-\textit{CIMS, NYU}\\
-New York City, US\\
-jlr9718@nyu.edu}
+
+\author{Nancy Nigam}
+\affiliation{%
+  \institution{New York University}
 }
+\email{nn2163@nyu.edu}
+
+\author{Jorge Roldan}
+\affiliation{%
+  \institution{New York University}
+}
+\email{jlr9718@nyu.edu}
+
+\author{Aditya Upadhyaya}
+\affiliation{%
+  \institution{New York University}
+}
+\email{au2056@nyu.edu}
+
+
 \maketitle
+
 
 \begin{abstract}
 \hl{Do abstract when we are done with everything else}
@@ -67,13 +83,6 @@ Continue talking about this paper \cite{DBLP:journals/corr/abs-1911-12903},
 % ----------------------------------------
 \subsection{LandCoverNet Dataset}
 % ----------------------------------------
-\subsubsection{Dataset Characteristics}
-The LandCoverNet dataset consists of 1980 image chips with a resolution of (256px x 256px) where each image chip correspond to a specific location across Africa. For each image chip there are several source images at different time stamps during 2018  obtained from the Sentinel-2 Surface reflectance product (L2A). Furthermore, each image has a corresponding mask with the labels for each pixel as shown in table \ref{landcovernet_dataset} \cite{DBLP:journals/corr/abs-2012-03111}.
-
-
-
-
-
 \begin{table}[htbp]
 \centering
 \caption{LandCoverNet dataset}
@@ -181,7 +190,7 @@ The authors of this dataset \cite{DBLP:journals/corr/abs-2005-02264} provided a 
 
 
 \subsubsection{Classes and RGB Mapping}
-The name of the classes, their respective pixel value and RGB value are shown in table \ref{landcover_ai_classes}. The annotations were made manually by the authors using VGG  Image Annotator (VIA) \cite{dutta2019vgg}. According to \cite{DBLP:journals/corr/abs-2005-02264}, there are 12280 buildings (1.85 km$^2$), 72.02 km$^2$ of woodland, 13.15 km$^2$ of water, 3.5 km$^2$ of roads, and 125.75 km$^2$ of background, that is, the unknown class.
+The name of the classes, their respective pixel value and RGB value are shown in table \ref{landcover_ai_classes}. The annotations were made manually by the authors using VGG  Image Annotator (VIA) \cite{dutta2019vgg}. According to \cite{DBLP:journals/corr/abs-2005-02264}, there are 12280 buildings (1.85 km$^2$), 72.02 km$^2$ of woodland, 13.15 km$^2$ of water, 3.5 km$^2$ of raods, and 125.75 km$^2$ of background, that is, the unknown class.
 
 \begin{table}[htbp]
 \centering
@@ -245,14 +254,19 @@ We conduct a variety of experiments across multiple configurations of our pipeli
 \subsubsection{Dataset Challenges}
 Datasets in their raw form pose a serious challenge due to multiple factors. For instance, the Ghana Dataset (cite) comprises of low-res images, class imbalance, and high cloud cover. On the other hand, the LandCoverNet dataset excels in terms of image quality and adequate labels for each class, but it comes up short when it comes to cloud cover. Figure 1 illustrates the results of one such experiment we conduct on this dataset.
 
-\subsubsection{Loss Functions} The choice of loss function plays a major role for any architecture as it dictates our learning process. In an effort to gain a deeper understanding of the impact of our choices, we do a comparative analysis of three popular loss functions - Focal, Dice, and Cross Entropy. To keep all other parameters constant, We plug a ResNet18 encoder (with pre-trained ImageNet weights) in our U-Net network. Training is done for a total of 40 epochs. We keep our initial dataset as the baseline (Fig1) and capture the results when we intentionally skew the dataset heavily towards one of the classes (woodland) (Fig x). Fig 1 depicts the progression of IoU over the iterations when the dataset isn't imbalanced.
+\subsubsection{Loss Functions} The choice of loss function plays a major role for any architecture as it dictates our learning process. In an effort to gain a deeper understanding of the impact of our choices, we do a comparative analysis of three popular loss functions - Focal, Dice, and Cross Entropy. To keep all other parameters constant, We plug a ResNet18 encoder (with pre-trained ImageNet weights) in our U-Net network. Training is done for a total of 40 epochs. We keep our initial dataset as the baseline and capture the results when we intentionally skew the dataset heavily towards one of the classes (woodland). Fig 1 de
+Fig 1 shows the predicted masks when we oversample the woodland representation (on an already unbalanced dataset).
+
+Fig. 2 shows the predicted masks on our actual dataset. Fig 3 and Fig 4 depict the progression of IoU and F-Scores respectively over the training iterations.
 
 \begin{figure}[h]
     \includegraphics[width=9cm, height=5cm]{images/roads-losses/three-losses-iou.png}
     \caption{Progression of IoU Scores over 40 epochs for Focal Loss (Magenta), Dice Loss (Teal), and Cross Entropy Loss (Gray). U-Net network having a ResNet18 encoder pre-trained with ImageNet weights. The dataset doesn't have an imbalance. }
 \end{figure}
 
-\subsubsection{Network and Encoders} With an intent to observe the effect of the depth of network, we try multiple encoders (ResNet18, ResNet34, and ResNet101) for our U-Net network. Additionally, we evaluate a U-Net++ network (using a ResNet34 encoder). All encoders are initialised with ImageNet weights. We train for a total of 40 epochs and employ Focal Loss as our loss function. The visualization results are shown in Fig 1. Fig 2,3,4 consist of graphs depicting the progession of metrics.
+\subsubsection{Network and Encoders} With an intent to observe the effect of the depth of network, we do a comparative analysis of ResNet18, ResNet34, and ResNet101. Additionally, we evaluate a U-Net++ network (using a ResNet34 encoder). All encoders are initialised with ImageNet weights. We train for a total of 40 epochs and employ Focal Loss as our loss function. The visualization results are shown in Fig 1. Fig 2,3,4 consist of graphs depicting the progession of metrics.
+
+With an intent to observe the effect of the depth of network, we do a comparative analysis of ResNet18, ResNet34, and ResNet101. Additionally, we evaluate a U-Net++ network (using a ResNet34 encoder). All encoders are initialised with ImageNet weights. We train for a total of 40 epochs and employ Focal Loss as our loss function. The visualization results are shown in Fig 1. Fig 2,3,4 consist of graphs depicting the progession of metrics.
 
 \begin{figure}[h]
     \includegraphics[width=9cm, height=5cm]{images/encoders/encoders_iou.png}
@@ -277,40 +291,34 @@ Datasets in their raw form pose a serious challenge due to multiple factors. For
 
 
 
-
-
-
-% ============================
-\section{Results}
-% ============================
-\begin{enumerate}
-    \item Dice Loss consistently misses out on the minority classes in cases of severe imbalance. This is shown best in Fig x where it fails to detect Roads.
-    \item Focal Loss performs marginally better (mean IoU = 0.875) than both Dice and Cross Entropy when the dataset is slightly balanced. However, the difference is stark in cases of severe imbalance.
-    \item When it comes to the number of layers in our encoder, depth truly matters and ResNet18 consistently achieves a 1 point lower mean IoU score (0.871) when compared to the other encoders over the course of 40 epochs.
-    \item ResNet101 on a U-Net network achieves a mean IoU score of 0.886 and a visual inspection of the results hint towards it being able to detect shapes concretely.
-    \item The combination of U-Net++ and ResNet34 performs only slightly better (mean IoU = 0.8871) than that U-Net and ResNet34 (mean IoU = 0.8843).
-\end{enumerate}
-% ============================
-\section{Conclusion}
-% ============================
 \begin{figure*}
     \centering
     \includegraphics[width=\textwidth]{images/no-roads-losses/2-images.png}
     \caption{Prediction on a highly-imbalanced dataset with a U-Net network on a ResNet18 encoder. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fifth columns represent the predicted mask with Dice, Focal, and Cross Entropy Loss respectively. Dice Loss(third columns) fails to detect the minority class (roads) in a lot of samples}
 \end{figure*}
 
-\begin{figure*}
+\begin{figure*}[h]
     \centering
     \includegraphics[width=\textwidth]{images/roads-losses/with-roads.png}
     \caption{Prediction on a more balanced dataset with a U-Net network on a ResNet18 encoder. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fitth columns represent the Predicted Mask with Dice, Focal, and Cross Entropy Loss respectively}
 \end{figure*}
 
-\begin{figure}[h]
-    \includegraphics[width=6cm, height=8cm]{images/dataset-vis.png}
-    \caption{Seed Dataset}
-\end{figure}
-\printbibliography %Prints bibliography
 
+% ============================
+\section{Results}
+% ============================
+\begin{enumerate}
+    \item Focal Loss performs the best in scenarios of data imbalance. On the other hand, IoU values remain comparable between the three loss functions when the dataset is slightly balanced.
+    \item ResNet50 performs best vs 18 and 34
+    \item U-Net++ provides a better.
+\end{enumerate}
+% ============================
+\section{Conclusion}
+% ============================
+
+
+
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{bibliography}
 
 \end{document}
-
