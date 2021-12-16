@@ -14,6 +14,12 @@
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
     
     
+\definecolor{black}{RGB}{0, 0, 0} 
+\definecolor{purple}{RGB}{80, 0, 165} 
+\definecolor{yellow}{RGB}{255, 204, 0} 
+\definecolor{cyan}{RGB}{0, 244, 244} 
+\definecolor{gray}{RGB}{105, 105, 105} 
+    
 \begin{document}
 
 
@@ -47,7 +53,7 @@ au2056@nyu.edu}
 % ============================
 The evolution of remote sensing technologies over the last couple of decades has drastically increase the amount of satellite imagery datasets available and open to the public. The increase of data available plus the advances in the fields of Machine Learning and Computer Vision to study and gain insights from these datasets has open the door to opportunities to tackle new type of problems at scale. \\ \indent
 One of these opportunities is the ability to manage and survey the properties of different land covers all around the world by automating the identification of terrains, natural or artificial structures, or any other object of interest using semantic segmentation models. These models receive as an input a source image and a mask where each pixel indicates the class of that pixel in the source image. Once the model is trained, it will ideally be able to predict a mask for a new, unseen image.  \\ \indent
-Automatic classification at the pixel level of satellite imagery can then play a key role at monitoring, managing, and detecting changes on land covers. This is directly related to the Life on Land objective from the United Nation's Sustainable development goals  \cite{united_nations}, which deals with protecting, restoring and promoting sustainable use of terrestrial ecosystems. Leveraging Machine Learning models for semantic segmentation tasks on these large satellite imagery datasets is a promising approach for successfully accomplish this sustainability goal.
+Automatic classification at the pixel level of satellite imagery can then play a key role at monitoring, managing, and detecting changes on land covers. This is directly related to the Life on Land objective from the United Nation's Sustainable development goals  \cite{united_nations}, which deals with protecting, restoring and promoting sustainable use of terrestrial ecosystems. Leveraging Machine Learning models for semantic segmentation tasks on these large satellite imagery datasets is a promising tool for successfully accomplishing this sustainability goal.
 
 % ============================
 \section{Related Work}
@@ -202,21 +208,21 @@ The name of the classes, their respective pixel value, and RGB value are shown i
 \begin{table}[htbp]
 \centering
 \caption{LandCover.ai Dataset}
-\begin{tabular}{|p{1.2cm}|p{0.7cm}|p{1.6cm}|}
+\begin{tabular}{|p{1.2cm}|p{0.7cm}|p{1.6cm}|p{0.7cm}|}
  \hline
- \multicolumn{3}{|c|}{\textbf{Landcover.ai Dataset Classes}} \\
+ \multicolumn{4}{|c|}{\textbf{Landcover.ai Dataset Classes}} \\
  \hline
- \textbf{Class Name} & \textbf{Pixel Value}& \textbf{RGB Value} \\
+ \textbf{Class Name} & \textbf{Pixel Value}& \textbf{RGB Value}& \textbf{Color} \\
  \hline
- Unknown & 0  & (0,0,0)\\ 
+ Unknown &  \ \ \ 0  & (0,0,0) &   \textcolor{black}{\ \ \ \rule{0.2cm}{0.2cm}} \\ 
  \hline
- Building & 1  & (80,0,165)\\ 
+ Building & \ \ \ 1  & (80,0,165) & \textcolor{purple}{\ \ \ \rule{0.2cm}{0.2cm}}\\ 
  \hline
- Woodland & 2  & (255,204,0)\\ 
+ Woodland & \ \ \ 2  & (255,204,0) &  \textcolor{yellow}{\ \ \ \rule{0.2cm}{0.2cm}}\\ 
  \hline
- Water & 3  & (0,244,244)\\ 
+ Water & \ \ \ 3  & (0,244,244) & \textcolor{cyan}{\ \ \ \rule{0.2cm}{0.2cm}} \\
  \hline
- Road & 4  & (105,105,105)\\ 
+ Road & \ \ \ 4  & (105,105,105) &  \textcolor{gray}{\ \ \ \rule{0.2cm}{0.2cm}} \\
  \hline
 \end{tabular}
 \label{landcover_ai_classes}
@@ -308,8 +314,8 @@ Datasets in their raw form pose a serious challenge due to a myriad of factors d
     \item Dice Loss consistently misses out on the minority classes in cases of severe imbalance. This is shown best in Fig x where it fails to detect Roads.
     \item Focal Loss performs marginally better (mean IoU = 0.875 on validation set) than both Dice and Cross Entropy when the dataset is slightly balanced. However, the difference is stark in cases of severe imbalance.
     \item When it comes to the number of layers in our encoder, we observe that depth matters and ResNet18 consistently achieves a 1 point lower mean IoU score (0.871) on the validation set when compared to the other encoders over the course of 40 epochs.
-    \item ResNet101 on a U-Net network achieves a mean IoU score of 0.886 on the validation set and a visual inspection of the results hint towards it being able to detect shapes concretely.
-    \item The combination of U-Net++ and ResNet34 performs only slightly better (mean IoU = 0.8871) than that U-Net and ResNet34 (mean IoU = 0.8843).
+    \item ResNet101 on a U-Net network achieves a mean IoU score of 0.8871 on the validation set and a visual inspection of the results hint towards it being able to detect shapes concretely.
+    \item The combination of U-Net++ and ResNet34 performs only slightly better (mean IoU = 0.886) than that U-Net and ResNet34 (mean IoU = 0.8843).
 \end{enumerate}
 
 
