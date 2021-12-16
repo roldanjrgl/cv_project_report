@@ -82,7 +82,7 @@ The LandCoverNet dataset consists of 1980 image chips with a resolution of (256p
  \hline
  \textbf{Class Name} & \textbf{Pixel Value}& \textbf{RGB Value} \\
  \hline
- Unkown & 0  & (0,0,0)\\ 
+ Unknown & 0  & (0,0,0)\\ 
  \hline
  Water & 1  & (0,0,255)\\ 
  \hline
@@ -92,7 +92,7 @@ The LandCoverNet dataset consists of 1980 image chips with a resolution of (256p
  \hline
  Snow/ice & 4 &  (245,245,255)\\ 
  \hline
- Wooddy & 5  & (214,76,43)\\ 
+ Woody & 5  & (214,76,43)\\ 
  \hline
  Cultivated & 7  & (24, 104, 24)\\ 
  \hline
@@ -179,15 +179,19 @@ The Crop Type in Ghana dataset \cite{Rustowicz2019SemanticSO} consists of images
 
 \subsubsection{Data collection, preprocessing, and challenges}
 The Ghana dataset was collected using the Radiant MLHub API \cite{radiant_mlhub_api}.
-One major advantage of this dataset is that it provides a cloud mask for each source image, which was not the case for the LandCoverNet dataset. We used this cloud mask in order to filter out any images that had clouds on it. We also converted all the source and masks images from TIF to PNG format. We have include these scripts in the data$\_$preprocessing folder in the source code. A major drawback of this dataset is that the resolution of the images is just (64px x 64px), which is rather low to successfully train models for semantic segmentation.
+One major advantage of this dataset is that it provides a cloud mask for each source image, which was not the case for the LandCoverNet dataset. We used this cloud mask in order to filter out any images that had clouds on it. We also converted all the source and masks images from TIF to PNG format. We have included these scripts in the data$\_$preprocessing folder in the source code. A major drawback of this dataset is that the resolution of the images is just (64px x 64px), which is rather low to successfully train models for semantic segmentation.
 
 
 \subsection{LandCover.ai Dataset}
 
-
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=6cm, height=9cm]{images/dataset-vis.png}
+    \caption{LandCover.ai : Sample Images}
+\end{figure}
 
 \subsubsection{Dataset Characteristics}
-The LandCover.ai dataset consists of satellite imagery for semantic segmentation applications covering a region of Poland of a total area of 216.2 km$^2$ \cite{DBLP:journals/corr/abs-2005-02264}. The original dataset consists of 41 orthophoto tiles of 5 km$^2$ where 33 images and 8 images have a resolution of (9000 px x 9500 px) and (4200 px x 4700 px), respectively. \\ \indent
+The LandCover.ai dataset consists of satellite imagery (Fig. 1) for semantic segmentation applications covering a region of Poland of a total area of 216.2 km$^2$  \cite{DBLP:journals/corr/abs-2005-02264}. The original dataset consists of 41 orthophoto tiles of 5 km$^2$ where 33 images and 8 images have a resolution of (9000 px x 9500 px) and (4200 px x 4700 px), respectively. \\ \indent
 The authors of this dataset \cite{DBLP:journals/corr/abs-2005-02264} provided a script which we used to split these 41 images and their respective masks into 10,674 source and 10,674 masks images of (512 px x 512 px) resolution. The land cover of these images consist of agricultural areas (60 \%) and mixed forests (29.6 \%). \\ \indent
 
 
@@ -259,22 +263,22 @@ Our seed dataset is divided into train-validation-test with a ratio of 80:10:10.
 We conduct a variety of experiments across multiple configurations of our pipeline and we discuss them in detail.
 
 \subsubsection{Dataset Challenges}
-Datasets in their raw form pose a serious challenge due to multiple factors. For instance, the Ghana Dataset \cite{Rustowicz2019SemanticSO} comprises of low-res images, class imbalance, and high cloud cover. On the other hand, the LandCoverNet dataset excels in terms of image quality and adequate labels for each class, but it comes up short when it comes to cloud cover. Figure 1 illustrates the results of one such experiment we conduct on this dataset.
+Datasets in their raw form pose a serious challenge due to a myriad of factors discussed in the previous section. Training results on the LandCoverNet and Ghana Dataset achieves a Pixel Accuracy in the lower range of 80s, but that is largely due to all pixels being classified as 'unlabeled'/'unknown' which happens to be the majority class. The mean IoU values fair poorly and tend to oscillate in the range of 0.2-0.3. Owing to these factors, the following set of experiments focus solely on the LandCover.ai dataset.
 
-\subsubsection{Loss Functions} The choice of loss function plays a major role for any architecture as it dictates our learning process. In an effort to gain a deeper understanding of the impact of our choices, we do a comparative analysis of three popular loss functions - Focal, Dice, and Cross Entropy. To keep all other parameters constant, We plug a ResNet18 encoder (with pre-trained ImageNet weights) in our U-Net network. Training is done for a total of 40 epochs. We keep our initial dataset as the baseline (Fig1) and capture the results when we intentionally skew the dataset heavily towards one of the classes (woodland) (Fig x \hl{Fix figure number}). Fig 1 depicts the progression of IoU over the iterations when the dataset isn't imbalanced.
+\subsubsection{Loss Functions} The choice of loss function plays a major role for any architecture as it dictates our learning process. In an effort to gain a deeper understanding of the impact of our choices, we do a comparative analysis of three popular loss functions - Focal, Dice, and Cross Entropy. To keep all other parameters constant, We plug a ResNet18 encoder (with pre-trained ImageNet weights) in our U-Net network. Training is done for a total of 40 epochs. We keep our initial dataset as the baseline (Fig 6) and capture the results when we intentionally skew the dataset heavily towards one of the classes (woodland) (Fig 7). Fig 1 depicts the progression of IoU over the iterations when the dataset isn't imbalanced.
 \usepackage{float}
 
 \begin{figure}[!h]
     \includegraphics[width=9cm, height=5cm]{images/roads-losses/three-losses-iou.png}
-    \caption{\hl{Mention dataset used} Progression of IoU Scores over 40 epochs for Focal Loss (Magenta), Dice Loss (Teal), and Cross Entropy Loss (Gray). U-Net network having a ResNet18 encoder pre-trained with ImageNet weights. The dataset doesn't have an imbalance. }
+    \caption{LandCover.ai : Progression of IoU Scores (y-axis) over 40 epochs (x-axis) for Focal Loss (Magenta), Dice Loss (Teal), and Cross Entropy Loss (Gray). U-Net network having a ResNet18 encoder pre-trained with ImageNet weights. The dataset doesn't have an imbalance. }
 \end{figure}
 
 
-\subsubsection{Network and Encoders} With an intent to observe the effect of the depth of network, we try multiple encoders (ResNet18, ResNet34, and ResNet101) for our U-Net network. Additionally, we evaluate a U-Net++ network (using a ResNet34 encoder). All encoders are initialised with ImageNet weights. We train for a total of 40 epochs and employ Focal Loss as our loss function. The visualization results are shown in Fig 1. Fig 2,3,4 consist of graphs depicting the progession of metrics.
+\subsubsection{Network and Encoders} With an intent to observe the effect of the depth of network, we try multiple encoders (ResNet18, ResNet34, and ResNet101) for our U-Net network. Additionally, we evaluate a U-Net++ network (using a ResNet34 encoder). All encoders are initialised with ImageNet weights. We train for a total of 40 epochs and employ Focal Loss as our loss function. The visualization results are shown in Fig 8. Fig 3,4, and 5 depict the progression of IoU scores, Focal Loss values, and F Scores respectively.
 
 \begin{figure}[!h]
     \includegraphics[width=9cm, height=5cm]{images/encoders/encoders_iou.png}
-    \caption{\hl{Mention dataset used} Progression of IoU Scores over 40 epochs for U-Net ResNet18 (Pink), U-Net ResNet34 (Orange), U-Net ResNet101 (Blue), and U-Net++ ResNet34 (Yellow). Focal Loss is being employed and all encoders are initialized with pre-trained Image-Net weights.}
+    \caption{LandCover.ai : Progression of IoU Scores (y-axis) over 40 epochs (x-axis) for U-Net ResNet18 (Pink), U-Net ResNet34 (Orange), U-Net ResNet101 (Blue), and U-Net++ ResNet34 (Yellow). Focal Loss is being employed and all encoders are initialized with pre-trained Image-Net weights.}
 \end{figure}
 
 
@@ -285,34 +289,21 @@ Datasets in their raw form pose a serious challenge due to multiple factors. For
 
 \begin{figure}[!h]
     \includegraphics[width=9cm, height=5cm]{images/encoders/encoders_focalloss.png}
-    \caption{\hl{Mention dataset used}  Progression of Focal Loss values over 40 epochs for U-Net ResNet18 (Yellow), U-Net ResNet34 (Dark Gray), U-Net ResNet101 (Pink), and U-Net++ ResNet34 (Purple).}
+    \caption{LandCover.ai : Progression of Focal Loss values (y-axis) over 40 epochs (x-axis) for U-Net ResNet18 (Yellow), U-Net ResNet34 (Dark Gray), U-Net ResNet101 (Pink), and U-Net++ ResNet34 (Purple).}
 \end{figure}
 
 \begin{figure}[!h]
     \includegraphics[width=9cm, height=5cm]{images/encoders/encoders_fscore.png}
-    \caption{\hl{Mention dataset used} Progression of F Scores over 40 epochs for U-Net ResNet18 (Blue), U-Net ResNet34 (Green), U-Net ResNet101 (Gray), and U-Net++ ResNet34 (Pink). }
+    \caption{LandCover.ai : Progression of F Scores (y-axis) over 40 epochs (x-axis) for U-Net ResNet18 (Blue), U-Net ResNet34 (Green), U-Net ResNet101 (Gray), and U-Net++ ResNet34 (Pink). }
 \end{figure}
 
 
 % ============================
 \section{Results}
 % ============================
-\begin{figure*}
-    \includegraphics[]{images/no-roads-losses/no-roads-smaller.png}
-    \caption{\hl{Mention dataset used} Prediction on a highly-imbalanced dataset with a U-Net network on a ResNet18 encoder. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fifth columns represent the predicted mask with Dice, Focal, and Cross Entropy Loss respectively. Dice Loss(third columns) fails to detect the minority class (roads) in a lot of samples}
-\end{figure*}
 
-\begin{figure*}
-    \includegraphics[]{images/roads-losses/roads-smaller.png}
-    \caption{\hl{Mention dataset used} Prediction on a more balanced dataset with a U-Net network on a ResNet18 encoder. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fitth columns represent the Predicted Mask with Dice, Focal, and Cross Entropy Loss respectively}
-\end{figure*}
-
-\begin{figure*}
-    \includegraphics[width=\textwidth]{images/encoders/encoders-vis.png}
-    \caption{\hl{Mention dataset used} Prediction on a more balanced dataset with a U-Net network on a ResNet18 encoder. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fitth columns represent the Predicted Mask with Dice, Focal, and Cross Entropy Loss respectively}
-\end{figure*}
 \begin{enumerate}
-    \item \hl{Specify that these results are for only the Landcover.ai dataset?} 
+    \item The presence of cloud cover and/or low-resolution images results in poor results. Additional pre-processing steps are required before one can expect satisfactory results. As a consequence, all our results are based off the LandCover.ai dataset.
     \item Roads and Buildings pose a challenge owing to their minority representation and narrowness (in case of roads). A lot of samples also present with scenarios where the road network is hidden under a canopy of trees.
     \item Dice Loss consistently misses out on the minority classes in cases of severe imbalance. This is shown best in Fig x where it fails to detect Roads.
     \item Focal Loss performs marginally better (mean IoU = 0.875 on validation set) than both Dice and Cross Entropy when the dataset is slightly balanced. However, the difference is stark in cases of severe imbalance.
@@ -321,22 +312,33 @@ Datasets in their raw form pose a serious challenge due to multiple factors. For
     \item The combination of U-Net++ and ResNet34 performs only slightly better (mean IoU = 0.8871) than that U-Net and ResNet34 (mean IoU = 0.8843).
 \end{enumerate}
 
+
 % ============================
 \section{Conclusion}
 
-In this study, we present a data processing and training pipeline that can be used to automate Satellite Imagery segmentation. Semantic Segmentation has a myriad of applications ranging from disaster resilience to tracking regional urbanization, environmental monitoring, and the Sentinel-2 mission has made this data readily available. We discuss the challenges that one can face while working on a new dataset, ways to overcome them, and create reliable images and masks for training. We then conduct a series of experiments to gauge the importance of choosing a loss function. Loss functions are a critical component of any learning-based approach and one of the factors that should govern this choice is the extent of class imbalance. We also observe the effects of the depth of an encoder by exploring different flavors of a U-Net network. Finally, the best performing model is the U-Net using a ResNet101 achieving an \hl{Should be IoU instead of mIoU?} mIoU score of 0.88. In the future, we can extend this study to track changes in a particular landscape over a period of time.
+In this study, we present a data processing and training pipeline that can be used to automate Satellite Imagery segmentation. Semantic Segmentation has a myriad of applications ranging from disaster resilience to tracking regional urbanization, environmental monitoring, and the Sentinel-2 mission has made this data readily available. We discuss the challenges that one can face while working on a new dataset, ways to overcome them, and create reliable images and masks for training. We then conduct a series of experiments to gauge the importance of choosing a loss function. Loss functions are a critical component of any learning-based approach and one of the factors that should govern this choice is the extent of class imbalance. We also observe the effects of the depth of an encoder by exploring different flavors of a U-Net network. Finally, the best performing model is the U-Net using a ResNet101 achieving an mIoU score of 0.88. In the future, we can extend this study to track changes in a particular landscape over a period of time.
 % ============================
 
+\begin{figure*}
+    \centering
+    \includegraphics[height=6cm]{images/roads-losses/roads-smaller.png}
+    \caption{LandCover.ai : Prediction on a slightly balanced dataset with a U-Net network on a ResNet18 encoder. This serves as our baseline. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fifth columns represent the Predicted Mask with Dice, Focal, and Cross Entropy Loss respectively.}
+\end{figure*}
 
+\begin{figure*}
+    \centering
+    \includegraphics[height=6cm]{images/no-roads-losses/no-roads-smaller.png}
+    \caption{LandCover.ai : Prediction on a highly-imbalanced dataset with a U-Net network on a ResNet18 encoder. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fifth columns represent the predicted mask with Dice, Focal, and Cross Entropy Loss respectively. Dice Loss(third columns) consistently fails to detect the minority class (roads).}
+\end{figure*}
 
-\begin{figure}[h]
-    \includegraphics[width=6cm, height=8cm]{images/dataset-vis.png}
-    \caption{\hl{Mention dataset used, please place this in the correct place} Seed Dataset}
-\end{figure}
+\begin{figure*}
+    \centering
+    \includegraphics[width=\textwidth]{images/encoders/encoders-vis.png}
+    \caption{LandCover.ai : Comparing the effect of using different encoders and/or network architecture. From left to right : Actual Image (first column), Target Mask (second column), Predicted Mask by U-Net ResNet18 (third column), Predicted Mask by U-Net ResNet34 (fourth column), Predicted Mask by U-Net ResNet101 (fifth column), Predicted Mask by U-Net++ ResNet34 (last column). For the second row, the actual image poses a challenge for the model with a hidden road network and ResNet101 fares better than the others.}
+\end{figure*}
+\clearpage
 
-
-
-\newpage
+%\newpage
 \printbibliography %Prints bibliography
 
 
