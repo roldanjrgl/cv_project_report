@@ -46,8 +46,8 @@ au2056@nyu.edu}
 \section{Introduction}
 % ============================
 The evolution of remote sensing technologies over the last couple of decades has drastically increase the amount of satellite imagery datasets available and open to the public. The increase of data available plus the advances in the fields of Machine Learning and Computer Vision to study and gain insights from these datasets has open the door to opportunities to tackle new type of problems at scale. \\ \indent
-One of these opportunities is the ability to manage and survey the properties of different land covers all around the world by automating the identification of terrains, natural or artificial structures, or any other object of interest using semantic segmentation models. These models receive as an input a source image and a mask where each pixel indicates the class of that pixel in the source image. Once the model is trained, it will ideally be able to predict a mask for a new image.  \\ \indent
-Automatic classification at the pixel level of satellite imagery can then play a key role at monitoring, managing, and detecting changes on land covers. This is directly related to the Life on Land objective from the United Nation's Sustainable development goals  \cite{united_nations}, which deals with protecting, restoring and promoting sustainable use of terrestrial ecosystems. 
+One of these opportunities is the ability to manage and survey the properties of different land covers all around the world by automating the identification of terrains, natural or artificial structures, or any other object of interest using semantic segmentation models. These models receive as an input a source image and a mask where each pixel indicates the class of that pixel in the source image. Once the model is trained, it will ideally be able to predict a mask for a new, unseen image.  \\ \indent
+Automatic classification at the pixel level of satellite imagery can then play a key role at monitoring, managing, and detecting changes on land covers. This is directly related to the Life on Land objective from the United Nation's Sustainable development goals  \cite{united_nations}, which deals with protecting, restoring and promoting sustainable use of terrestrial ecosystems. Leveraging Machine Learning models for semantic segmentation tasks on these large satellite imagery datasets is a promising approach for successfully accomplish this sustainability goal.
 
 % ============================
 \section{Related Work}
@@ -105,14 +105,12 @@ The LandCoverNet dataset consists of 1980 image chips with a resolution of (256p
 \subsubsection{Data collection, preprocessing, and challenges}
 
 The LandCoverNet dataset \cite{DBLP:journals/corr/abs-2012-03111} was collected using the Radiant MLHub API, \cite{radiant_mlhub_api}. Since this API is in the early stages of development, we faced many issues while collecting the data. The primary issue was that we couldn't filter out source images with clouds on it, therefore a significant portion of the dataset had source images with clouds. \\ \indent
-The format of the sources and mask images was TIF, therefore we had to convert all of these images into PNG by stacking the Red Blue, and Green channels.
-
-The script we used to do this is provided in the source code.
+The format of the sources and mask images was TIF, therefore we had to convert all of these images into PNG by stacking the Red Blue, and Green channels. The masks also had initially the TIF format with one channel, where the value of each pixel represents the class from table \ref{landcovernet_dataset}. Finally, we used the RGB mapping to convert each mask to an RGB PNG image. The scripts we created to do this are provided in the data$\_$preprocessing folder in the source code.
 
 
 \subsection{Semantic Segmentation of Crop Type in Ghana Dataset}
 \subsubsection{Dataset Characteristics}
-The Crop Type in Ghana dataset \cite{Rustowicz2019SemanticSO} consists of images from Sentinel-1 and sentinel-2 from Ghana and South Sudan taken over 2016 and 2017. For each image chip, there are several source images at different time stamps, and a corresponding label. There are 25 labels for different type of crops as shown in table \ref{ghana_dataset_class_table}. A major drawback of this dataset is that the resolution of the images is just (64px x 64px), which is rather low to successfully train models for semantic segmentation. 
+The Crop Type in Ghana dataset \cite{Rustowicz2019SemanticSO} consists of images from Sentinel-1 and sentinel-2 from Ghana and South Sudan taken over 2016 and 2017. For each image chip, there are several source images at different time stamps, and a corresponding mask. There are 25 labels for different type of crops as shown in table \ref{ghana_dataset_class_table}.  
 
 
 \begin{table}[htbp]
@@ -180,6 +178,8 @@ The Crop Type in Ghana dataset \cite{Rustowicz2019SemanticSO} consists of images
 
 
 \subsubsection{Data collection, preprocessing, and challenges}
+The Ghana dataset was collected using the Radiant MLHub API \cite{radiant_mlhub_api}.
+One major advantage of this dataset is that it provides a cloud mask for each source image, which was not the case for the LandCoverNet dataset. We used this cloud mask in order to filter out any images that had clouds on it. We also converted all the source and masks images from TIF to PNG format. We have include these scripts in the data$\_$preprocessing folder in the source code. A major drawback of this dataset is that the resolution of the images is just (64px x 64px), which is rather low to successfully train models for semantic segmentation.
 
 
 \subsection{LandCover.ai Dataset}
@@ -220,7 +220,8 @@ The name of the classes, their respective pixel value, and RGB value are shown i
 \\
 
 \subsubsection{Data collection, preprocessing, and challenges}
-The source images and masks are LandCover.ai were originally provided in PNG and JPG format, respectively. The masks consisted of one channel where each pixel had the value of the class (0 - 4) as shown in table \ref{landcover_ai_classes}. In order to be able to use them in our model, we mapped each pixel value to the corresponding RGB value and generated a new PNG mask that can directly be used when training our model. This python script can be found in our source code. The source images  in this dataset did not contain clouds since the authors \cite{DBLP:journals/corr/abs-2005-02264} filtered out any of these images. 
+The source images and masks are LandCover.ai were originally provided in PNG and JPG format, respectively. The masks consisted of one channel where each pixel had the value of the class (0 - 4) as shown in table \ref{landcover_ai_classes}. In order to be able to use them in our model, we mapped each pixel value to the corresponding RGB value and generated a new PNG mask that can directly be used when training our model. This python script can be found in the data$\_$preprocessing folder in our source code. \\ \indent
+Two major advantages of the Landcover.ai dataset, compared the LandCoverNet and Crop Type in Ghana dataset is that the source images  in Landcover.ai did not contain clouds since the authors \cite{DBLP:journals/corr/abs-2005-02264} filtered out any of these images. Furthermore, the high-resolution and quality of the images makes this dataset the ideal one to train our semantic segmentation models.      
 
 
 
