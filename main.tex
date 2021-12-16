@@ -38,9 +38,9 @@ jlr9718@nyu.edu}
 }
 \maketitle
 
-\begin{abstract}
-\hl{Do abstract when we are done with everything else}
-\end{abstract}
+% \begin{abstract}
+% \hl{Do abstract when we are done with everything else}
+% \end{abstract}
 
 % ============================
 \section{Introduction}
@@ -52,7 +52,7 @@ Automatic classification at the pixel level of satellite imagery can then play a
 % ============================
 \section{Related Work}
 % ============================
-The application of semantic segmentation models on satellite imagery have been shown to perform well in many cases \cite{DBLP:journals/corr/abs-2003-02899}, \cite{DBLP:journals/corr/abs-2010-06285}, \cite{DBLP:journals/corr/abs-1911-12903}. 
+The application of semantic segmentation models on satellite imagery have been shown to perform well in many cases \cite{DBLP:journals/corr/abs-2003-02899}\cite{DBLP:journals/corr/abs-2010-06285}\cite{DBLP:journals/corr/abs-1911-12903} \cite{Avenash2019SemanticSO}\cite{9137717}\cite{DBLP:journals/corr/BadrinarayananK15}\cite{DBLP:journals/corr/abs-1711-08681}\cite{DBLP:journals/corr/abs-1904-03983}.
 Authors in \cite{DBLP:journals/corr/abs-2003-02899} trained a ResNet model architecture for classification on the BigEarthNet dataset \cite{DBLP:journals/corr/abs-1902-06148}. They also trained a modified U-Net architecture for the segmentation tasks using a customized dataset, which combined a CORINE Land Cover map as well as Sentinel-2 source images. Using these combinations of architectures and datasets, they obtained an overall F1 score of 0.749 for the classifier with 43 possible classes, as well as a high IoU score for the segmentation model. \\ \indent
 Authors in other works such as \cite{DBLP:journals/corr/abs-2010-06285} used a pretrained ResNet50 and transfer it into a U-Res-Net for classification tasks. They also used a customized version of U-Net for the segmentation tasks. A common technique in these works is to use data  augmentation to overcome the challenge of small size of the satellite imagery datasets currently available.  \\ \indent
 Other interesting applications of semantic segmentation models is to detect changes in different land covers terrains over time as done in \cite{DBLP:journals/corr/abs-1911-12903}. In this work, the authors use Deeplab v3+  \cite{DBLP:journals/corr/ChenPSA17} and build a complete training pipeline to create a land cover change detection system achievin a mean IoU of 0.756.
@@ -282,15 +282,6 @@ Datasets in their raw form pose a serious challenge due to multiple factors. For
 % ============================
 \section{Results}
 % ============================
-\begin{enumerate}
-    \item Roads and Buildings pose a challenge owing to their minority representation and narrowness (in case of roads). A lot of samples also present with scenarios where the road network is hidden under a canopy of trees.
-    \item Dice Loss consistently misses out on the minority classes in cases of severe imbalance. This is shown best in Fig x where it fails to detect Roads.
-    \item Focal Loss performs marginally better (mean IoU = 0.875 on validation set) than both Dice and Cross Entropy when the dataset is slightly balanced. However, the difference is stark in cases of severe imbalance.
-    \item When it comes to the number of layers in our encoder, we observe that depth matters and ResNet18 consistently achieves a 1 point lower mean IoU score (0.871) on the validation set when compared to the other encoders over the course of 40 epochs.
-    \item ResNet101 on a U-Net network achieves a mean IoU score of 0.886 on the validation set and a visual inspection of the results hint towards it being able to detect shapes concretely.
-    \item The combination of U-Net++ and ResNet34 performs only slightly better (mean IoU = 0.8871) than that U-Net and ResNet34 (mean IoU = 0.8843).
-\end{enumerate}
-
 \begin{figure*}
     \includegraphics[]{images/no-roads-losses/no-roads-smaller.png}
     \caption{Prediction on a highly-imbalanced dataset with a U-Net network on a ResNet18 encoder. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fifth columns represent the predicted mask with Dice, Focal, and Cross Entropy Loss respectively. Dice Loss(third columns) fails to detect the minority class (roads) in a lot of samples}
@@ -305,6 +296,15 @@ Datasets in their raw form pose a serious challenge due to multiple factors. For
     \includegraphics[width=\textwidth]{images/encoders/encoders-vis.png}
     \caption{Prediction on a more balanced dataset with a U-Net network on a ResNet18 encoder. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fitth columns represent the Predicted Mask with Dice, Focal, and Cross Entropy Loss respectively}
 \end{figure*}
+\begin{enumerate}
+    \item Roads and Buildings pose a challenge owing to their minority representation and narrowness (in case of roads). A lot of samples also present with scenarios where the road network is hidden under a canopy of trees.
+    \item Dice Loss consistently misses out on the minority classes in cases of severe imbalance. This is shown best in Fig x where it fails to detect Roads.
+    \item Focal Loss performs marginally better (mean IoU = 0.875 on validation set) than both Dice and Cross Entropy when the dataset is slightly balanced. However, the difference is stark in cases of severe imbalance.
+    \item When it comes to the number of layers in our encoder, we observe that depth matters and ResNet18 consistently achieves a 1 point lower mean IoU score (0.871) on the validation set when compared to the other encoders over the course of 40 epochs.
+    \item ResNet101 on a U-Net network achieves a mean IoU score of 0.886 on the validation set and a visual inspection of the results hint towards it being able to detect shapes concretely.
+    \item The combination of U-Net++ and ResNet34 performs only slightly better (mean IoU = 0.8871) than that U-Net and ResNet34 (mean IoU = 0.8843).
+\end{enumerate}
+
 % ============================
 \section{Conclusion}
 
@@ -313,12 +313,14 @@ In this study, we present a data processing and training pipeline that can be us
 
 
 
-
-
 \begin{figure}[h]
     \includegraphics[width=6cm, height=8cm]{images/dataset-vis.png}
     \caption{Seed Dataset}
 \end{figure}
+
+
+
+\newpage
 \printbibliography %Prints bibliography
 
 
