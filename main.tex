@@ -9,6 +9,7 @@
 \usepackage{xcolor}
 \usepackage{soul}
 \usepackage{biblatex} %Imports biblatex package
+\usepackage{hyperref}
 \addbibresource{bibliography.bib} %Import the bibliography file
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
@@ -23,7 +24,7 @@
 \begin{document}
 
 
-\title{Semantic Segmentation of Land Cover using Satellite Imagery \\}
+\title{Semantic Segmentation of Satellite Imagery \\}
 \author{\IEEEauthorblockN{Nancy Nigam}
 \IEEEauthorblockA{\textit{Computer Science} \\
 \textit{CIMS, NYU}\\
@@ -44,9 +45,14 @@ au2056@nyu.edu}
 }
 \maketitle
 
-% \begin{abstract}
-% \hl{Do abstract when we are done with everything else}
-% \end{abstract}
+
+\begin{abstract}
+The ability to automatically classify the class at the pixel level of satellite imagery has a wide range of applications including monitoring, managing, and detecting changes of land cover. In this work, we use different versions of the ResNet model for classification tasks, and U-Net for the segmentation tasks. \\ We explore the effect of three different losses, namely, Focal, Dice, and Cross entropy together with the mentioned models to find out the ideal configuration.
+\\  \indent We trained and tested our models on three datasets: LandCoverNet, Crop Type In Ghana, and Landcover.ai. Due to challenges such as cloud cover and low-resolution images, we decided to mostly focus and tune our models using the Landcover.ai dataset. The mean IoU scores for different models on the Landcover.ai datasets we obtained are 0.884 for U-Net with Resnet34, 0.871 for U-Net with ResNet18, 0.887 for U-Net with ResNet101, and finally 0.886 for U-Net++ with ResNet34. We also found Focal loss perform significantly better than both the Dice and Cross entropy losses, specially when classes are in the dataset are imbalanced.  \\
+
+Github: \href{https://github.com/roldanjrgl/semantic_segmentation_for_satellite_imagery}{semantic-segmentation-for-satellite-imagery}
+\end{abstract}
+
 
 % ============================
 \section{Introduction}
@@ -119,6 +125,69 @@ The format of the sources and mask images was TIF, therefore we had to convert a
 The Crop Type in Ghana dataset \cite{Rustowicz2019SemanticSO} consists of images from Sentinel-1 and sentinel-2 from Ghana and South Sudan taken over 2016 and 2017. For each image chip, there are several source images at different time stamps, and a corresponding mask. There are 25 labels for different type of crops as shown in table \ref{ghana_dataset_class_table}.  
 
 
+% \begin{table}[htbp]
+% \centering
+% \caption{Ghana Dataset}
+% \begin{tabular}{|p{2.2cm}|p{0.7cm}|p{1.6cm}|}
+%  \hline
+%  \multicolumn{3}{|c|}{\textbf{Crop Type in Ghana Dataset Classes}} \\
+%  \hline
+%  \textbf{Class Name} & \textbf{Pixel Value}& \textbf{RGB Value} \\
+%  \hline
+%   Unknown & 0  &  (0, 0, 0)\\ 
+%  \hline
+%   Ground nut & 1  & (80,0,165) \\ 
+%  \hline
+%   Maize & 2  & (255,204,0) \\ 
+%  \hline
+%   Rice & 3  & (0,244,244)\\ 
+%  \hline
+%   Soya bean & 4  & (105,105,105)\\ 
+%  \hline
+%   Yam & 5  & (255,255,102) \\ 
+%  \hline
+%   Intercrop & 6  & (255,153,153)\\ 
+%  \hline
+%   Sorghum & 7  & (127,222,209)\\ 
+%  \hline
+%   Okra & 8  & (222,127,219)\\ 
+%  \hline
+%   Cassava & 9  & (108,67,107)\\ 
+%  \hline
+%   Millet & 10  & (152,134,94)\\ 
+%  \hline
+%   Tomato & 11 & (99,228,150) \\ 
+%  \hline
+%   Cowpea & 12  & (99,176,228)\\ 
+%  \hline
+%   Sweet Potato & 13 & (255,186,186)\\ 
+%  \hline
+%   Babala Beans & 14  & (204,0,102) \\ 
+%  \hline
+%   Salad Vegetables & 15  & (102,51,0)\\ 
+%  \hline
+%   Bra and Ayolo  & 16  & (204,204,255)\\ 
+%  \hline
+%   Watermelon & 17  & (0,102,204)\\ 
+%  \hline
+%   Zabla & 18 & (255,0,255)\\ 
+%  \hline
+%   Nili & 19 & (102,0,204)\\ 
+%  \hline
+%   Kpalika & 20 & (141,51,117)\\ 
+%  \hline
+%   Cotton & 21 & (145,187,192)\\ 
+%  \hline
+%   Akata & 22 & (155,123,219)\\ 
+%  \hline
+%   Nyenabe & 23 & (193,0,76)\\ 
+%  \hline
+%   Pepper & 24 & (204,255,153)\\ 
+%  \hline
+% \end{tabular}
+% \label{ghana_dataset_class_table}
+% \end{table}
+
 \begin{table}[htbp]
 \centering
 \caption{Ghana Dataset}
@@ -132,47 +201,7 @@ The Crop Type in Ghana dataset \cite{Rustowicz2019SemanticSO} consists of images
  \hline
   Ground nut & 1  & (80,0,165) \\ 
  \hline
-  Maize & 2  & (255,204,0) \\ 
- \hline
-  Rice & 3  & (0,244,244)\\ 
- \hline
-  Soya bean & 4  & (105,105,105)\\ 
- \hline
-  Yam & 5  & (255,255,102) \\ 
- \hline
-  Intercrop & 6  & (255,153,153)\\ 
- \hline
-  Sorghum & 7  & (127,222,209)\\ 
- \hline
-  Okra & 8  & (222,127,219)\\ 
- \hline
-  Cassava & 9  & (108,67,107)\\ 
- \hline
-  Millet & 10  & (152,134,94)\\ 
- \hline
-  Tomato & 11 & (99,228,150) \\ 
- \hline
-  Cowpea & 12  & (99,176,228)\\ 
- \hline
-  Sweet Potato & 13 & (255,186,186)\\ 
- \hline
-  Babala Beans & 14  & (204,0,102) \\ 
- \hline
-  Salad Vegetables & 15  & (102,51,0)\\ 
- \hline
-  Bra and Ayolo  & 16  & (204,204,255)\\ 
- \hline
-  Watermelon & 17  & (0,102,204)\\ 
- \hline
-  Zabla & 18 & (255,0,255)\\ 
- \hline
-  Nili & 19 & (102,0,204)\\ 
- \hline
-  Kpalika & 20 & (141,51,117)\\ 
- \hline
-  Cotton & 21 & (145,187,192)\\ 
- \hline
-  Akata & 22 & (155,123,219)\\ 
+  ... & ...  & ...\\ 
  \hline
   Nyenabe & 23 & (193,0,76)\\ 
  \hline
@@ -241,7 +270,7 @@ Two major advantages of the Landcover.ai dataset, compared the LandCoverNet and 
 % ----------------------------------------
 \subsection{Architectures}
 
-For the purpose of our experiments, we leverage a U-Net network \cite{ronneberger2015unet}. U-Net is a fully convolution neural network used extensively for image segmentation. It involves encoder and decoder components connected with skip connections. For the classification model that serves as our encoder and extracts features of different spatial resolution, we use a ResNet architecture \cite{DBLP:journals/corr/HeZRS15}. As part of our ablation study, we also review a U-Net++ network \cite{DBLP:journals/corr/abs-1807-10165} which consists of convolution layers on skip pathways.
+For the purpose of our experiments, we leverage a U-Net architecture \cite{ronneberger2015unet}. U-Net is a fully convolution neural network used extensively for image segmentation. It involves encoder and decoder components connected with skip connections. For the classification model that serves as our encoder and extracts features of different spatial resolution, we use a ResNet architecture \cite{DBLP:journals/corr/HeZRS15}. As part of our ablation study, we also review U-Net++ \cite{DBLP:journals/corr/abs-1807-10165} which is essentially a nested architecture consists of convolution layers on skip pathways.
 % ----------------------------------------
 
 % ----------------------------------------
@@ -252,7 +281,7 @@ For the purpose of our experiments, we leverage a U-Net network \cite{ronneberge
     IoU=\frac{target \cap prediction}{target \cup prediction}
 \end{equation*}
 
-In addition to IoU, we also capture Pixel Accuracy, Precision, and Recall. High pixel accuracy (the number of pixels classified correctly) doesn't always imply good segmentation results, especially in cases of class imbalance. This is true in our case since the 'woodland' class dominates all other classes.
+In addition to IoU, we also capture Pixel Accuracy, Precision, and Recall. High pixel accuracy (the number of pixels classified correctly) doesn't always imply good segmentation results, especially in cases of class imbalance. 
 
 % ============================
 \section{Setup and Experiments}
@@ -264,34 +293,27 @@ Our entire data augmentation, training, and prediction pipeline is implemented o
 \\Typically, neural network initialized with weights from a pre-trained network shows better performance and for our purposes, we initialize our ResNet encoder with ImageNet weights. The encoder depth is kept at a constant value of 5 throughout the scope of our experiments. 
 
 \subsection{Hyperparameters}
-Our seed dataset is divided into train-validation-test with a ratio of 80:10:10. A batch size of 32 works best for our use-case and we keep this value constant throughout. The Adam optimizer is our choice for all our experiments as it helps us converge faster and we apply a softmax activation after the final convolution layer. A bit of fine-tuning helps us arrive at a starting learning rate of $1\text{e-}4$ for our StepLR with a multiplicative factor of 0.1 every 15 epochs. The step size varies when it comes to training with the ResNet101 encoder. Finally, the choice for our loss function is the Focal Loss as it helps us address class imbalance. We do consider other loss functions (Cross Entropy Loss and Dice Loss) and we discuss this in detail in the next section.
+Our seed dataset is divided into train-validation-test with a ratio of 80:10:10. A batch size of 32 works best for our use-case and we keep this value constant throughout. We start off with SGD, but the Adam optimizer soon becomes our choice for all our experiments as it helps us converge faster and we apply a softmax activation after the final convolution layer. A bit of fine-tuning helps us arrive at a starting learning rate of $1\text{e-}4$ for our StepLR with a multiplicative factor of 0.1 every 15 epochs. The step size varies when it comes to training with different encoders. Finally, the choice for our loss function is the Focal Loss as it helps us address class imbalance. We do consider other loss functions (Cross Entropy Loss and Dice Loss) and we discuss this in detail in the next section.
 \subsection{Experiments}
-We conduct a variety of experiments across multiple configurations of our pipeline and we discuss them in detail.
+We conduct a number of experiments across multiple configurations of our pipeline and we discuss them in detail.
 
 \subsubsection{Dataset Challenges}
-Datasets in their raw form pose a serious challenge due to a myriad of factors discussed in the previous section. Training results on the LandCoverNet and Ghana Dataset achieves a Pixel Accuracy in the lower range of 80s, but that is largely due to all pixels being classified as 'unlabeled'/'unknown' which happens to be the majority class. The mean IoU values fair poorly and tend to oscillate in the range of 0.2-0.3. Owing to these factors, the following set of experiments focus solely on the LandCover.ai dataset.
+Datasets in their raw form pose a serious challenge due to a myriad of factors discussed in the previous section. Training results on the LandCoverNet and Ghana Dataset achieves a Pixel Accuracy in the lower range of 80s, but that is largely due to all pixels being classified as 'unlabeled'/'unknown' which happens to be the majority class. The mean IoU values fair poorly and tend to oscillate in the range of 0.3-0.4. Owing to these factors, the following set of experiments focus solely on the LandCover.ai dataset.
 
-\subsubsection{Loss Functions} The choice of loss function plays a major role for any architecture as it dictates our learning process. In an effort to gain a deeper understanding of the impact of our choices, we do a comparative analysis of three popular loss functions - Focal, Dice, and Cross Entropy. To keep all other parameters constant, We plug a ResNet18 encoder (with pre-trained ImageNet weights) in our U-Net network. Training is done for a total of 40 epochs. We keep our initial dataset as the baseline (Fig 6) and capture the results when we intentionally skew the dataset heavily towards one of the classes (woodland) (Fig 7). Fig 1 depicts the progression of IoU over the iterations when the dataset isn't imbalanced.
-\usepackage{float}
+\subsubsection{Loss Functions} The choice of loss function plays a major role for any architecture as it dictates our learning process. In an effort to gain a deeper understanding of the impact of our choices, we do a comparative analysis of three popular loss functions - Focal, Dice, and Cross Entropy. To keep all other parameters constant, We plug a ResNet18 encoder (with pre-trained ImageNet weights) in our U-Net. Training is done for a total of 40 epochs. We keep our initial dataset as the baseline (Fig 6) and capture the results when we intentionally skew the dataset heavily towards one of the classes (woodland) (Fig 7). Fig 1 depicts the progression of IoU over the iterations when the dataset isn't imbalanced.
 
 \begin{figure}[!h]
     \includegraphics[width=9cm, height=5cm]{images/roads-losses/three-losses-iou.png}
-    \caption{LandCover.ai : Progression of IoU Scores (y-axis) over 40 epochs (x-axis) for Focal Loss (Magenta), Dice Loss (Teal), and Cross Entropy Loss (Gray). U-Net network having a ResNet18 encoder pre-trained with ImageNet weights. The dataset doesn't have an imbalance. }
+    \caption{LandCover.ai : Progression of IoU Scores (y-axis) over 40 epochs (x-axis) for Focal Loss (Magenta), Dice Loss (Teal), and Cross Entropy Loss (Gray) on a U-Net with a ResNet18 encoder pre-trained with ImageNet weights. The dataset doesn't have a significant imbalance. }
 \end{figure}
 
 
-\subsubsection{Network and Encoders} With an intent to observe the effect of the depth of network, we try multiple encoders (ResNet18, ResNet34, and ResNet101) for our U-Net network. Additionally, we evaluate a U-Net++ network (using a ResNet34 encoder). All encoders are initialised with ImageNet weights. We train for a total of 40 epochs and employ Focal Loss as our loss function. The visualization results are shown in Fig 8. Fig 3,4, and 5 depict the progression of IoU scores, Focal Loss values, and F Scores respectively.
+\subsubsection{Network and Encoders} With an intent to observe the effect of the depth of network, we try multiple encoders (ResNet18, ResNet34, and ResNet101) for our U-Net. Additionally, we evaluate a U-Net++ network based on a ResNet34 encoder. All encoders are initialised with ImageNet weights. We train for a total of 40 epochs and employ Focal Loss as our loss function. The visualization results are shown in Fig 8. Fig 3,4, and 5 depict the progression of IoU scores, Focal Loss values, and F Scores respectively.
 
 \begin{figure}[!h]
     \includegraphics[width=9cm, height=5cm]{images/encoders/encoders_iou.png}
     \caption{LandCover.ai : Progression of IoU Scores (y-axis) over 40 epochs (x-axis) for U-Net ResNet18 (Pink), U-Net ResNet34 (Orange), U-Net ResNet101 (Blue), and U-Net++ ResNet34 (Yellow). Focal Loss is being employed and all encoders are initialized with pre-trained Image-Net weights.}
 \end{figure}
-
-
-% \begin{figure}[h]
-%     \includegraphics[width=9cm, height=5cm]{images/encoders/encoders_accuracy.png}
-%     \caption{Progression of Pixel Accuracy over 40 epochs for U-Net ResNet18 (Dark Gray), U-Net ResNet34 (Purple), U-Net ResNet101 (Orange), and U-Net++ ResNet34 (Sky Blue). Focal Loss is being employed and all encoders are initialized with pre-trained Image-Net weights.}
-% \end{figure}
 
 \begin{figure}[!h]
     \includegraphics[width=9cm, height=5cm]{images/encoders/encoders_focalloss.png}
@@ -315,26 +337,44 @@ Datasets in their raw form pose a serious challenge due to a myriad of factors d
     \item Focal Loss performs marginally better (mean IoU = 0.875 on validation set) than both Dice and Cross Entropy when the dataset is slightly balanced. However, the difference is stark in cases of severe imbalance.
     \item When it comes to the number of layers in our encoder, we observe that depth matters and ResNet18 consistently achieves a 1 point lower mean IoU score (0.871) on the validation set when compared to the other encoders over the course of 40 epochs.
     \item ResNet101 on a U-Net network achieves a mean IoU score of 0.8871 on the validation set and a visual inspection of the results hint towards it being able to detect shapes concretely.
-    \item The combination of U-Net++ and ResNet34 performs only slightly better (mean IoU = 0.886) than that U-Net and ResNet34 (mean IoU = 0.8843).
+    \item The combination of U-Net++ and ResNet34 performs only slightly better (mean IoU = 0.886) than that U-Net and ResNet34 (mean IoU = 0.8843). The final numbers are shown in Table IV.
 \end{enumerate}
+
+
+\begin{table}[htbp]
+\centering
+\caption{mean IoU scores for different models}
+\begin{tabular}{|p{3.9cm}|p{0.7cm}|}
+ \hline 
+ U-Net with ResNet34 (Baseline) &  0.884  \\ 
+ \hline 
+ U-Net with ResNet18  & 0.871  \\ 
+ \hline 
+ U-Net with ResNet101 & 0.887  \\ 
+ \hline
+  U-Net++ with ResNet34 & 0.886  \\ 
+ \hline
+\end{tabular}
+\label{landcover_ai_classes}
+\end{table}
 
 
 % ============================
 \section{Conclusion}
 
-In this study, we present a data processing and training pipeline that can be used to automate Satellite Imagery segmentation. Semantic Segmentation has a myriad of applications ranging from disaster resilience to tracking regional urbanization, environmental monitoring, and the Sentinel-2 mission has made this data readily available. We discuss the challenges that one can face while working on a new dataset, ways to overcome them, and create reliable images and masks for training. We then conduct a series of experiments to gauge the importance of choosing a loss function. Loss functions are a critical component of any learning-based approach and one of the factors that should govern this choice is the extent of class imbalance. We also observe the effects of the depth of an encoder by exploring different flavors of a U-Net network. Finally, the best performing model is the U-Net using a ResNet101 achieving an mIoU score of 0.88. In the future, we can extend this study to track changes in a particular landscape over a period of time.
+In this study, we present a data processing and training pipeline that can be used to automate Satellite Imagery segmentation. Semantic Segmentation has a myriad of applications ranging from disaster resilience to tracking regional urbanization, environmental monitoring, and the Sentinel-2 mission has made this data readily available. We discuss the challenges that one can face while working on a new dataset, ways to overcome them, and create reliable images and masks for training. We then conduct a series of experiments to gauge the importance of choosing a loss function. Loss functions are a critical component of any learning-based approach and one of the factors that should govern this choice is the extent of class imbalance. We also observe the effects of the depth of an encoder by exploring different flavors of U-Net. Finally, the best performing model is the U-Net with a backbone of ResNet101 achieving an mIoU score of 0.886. In the future, we can extend this study to track changes in a particular landscape over a period of time.
 % ============================
 
 \begin{figure*}
     \centering
     \includegraphics[height=6cm]{images/roads-losses/roads-smaller.png}
-    \caption{LandCover.ai : Prediction on a slightly balanced dataset with a U-Net network on a ResNet18 encoder. This serves as our baseline. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fifth columns represent the Predicted Mask with Dice, Focal, and Cross Entropy Loss respectively.}
+    \caption{LandCover.ai : Prediction on a slightly balanced dataset with a U-Net on a ResNet18 encoder. This serves as our baseline. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fifth columns represent the Predicted Mask with Dice, Focal, and Cross Entropy Loss respectively.}
 \end{figure*}
 
 \begin{figure*}
     \centering
     \includegraphics[height=6cm]{images/no-roads-losses/no-roads-smaller.png}
-    \caption{LandCover.ai : Prediction on a highly-imbalanced dataset with a U-Net network on a ResNet18 encoder. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fifth columns represent the predicted mask with Dice, Focal, and Cross Entropy Loss respectively. Dice Loss(third columns) consistently fails to detect the minority class (roads).}
+    \caption{LandCover.ai : Prediction on a highly-imbalanced dataset with a U-Net on a ResNet18 encoder. The first column contains the actual images, the second column represents the target mask, the third, fourth, and fifth columns represent the predicted mask with Dice, Focal, and Cross Entropy Loss respectively. Dice Loss(third columns) consistently fails to detect the minority class (roads).}
 \end{figure*}
 
 \begin{figure*}
